@@ -163,8 +163,7 @@ exports.playCmd = (rl) => {
 };
 
 exports.creditsCmd = (rl) => {
-    log('Autor de la práctica:');
-    log('SERGIO TURIÑO ESCOBAR');
+    log('Autor de la práctica: SERGIO TURIÑO ESCOBAR');
     rl.prompt();
 };
 
