@@ -164,7 +164,7 @@ exports.playCmd = (rl) => {
 
 exports.creditsCmd = (rl) => {
     log('Autor de la práctica:');
-    log('Sergio Turiño Escobar');
+    log('SERGIO TURIÑO ESCOBAR');
     rl.prompt();
 };
 
