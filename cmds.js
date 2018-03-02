@@ -102,10 +102,12 @@ exports.testCmd = (rl, id) => {
                 const resp = answer.toLowerCase().trim();
                 const respBuena = quiz.answer.toLowerCase().trim();
                 if (resp === respBuena) {
+                    log('Su repuesta es correcta.');
                     biglog('CORRECTO', 'green');
                     rl.prompt();
                 }
                 else {
+                    log('Su respuesta es incorrecta.');
                     biglog('INCORRECTO', 'red');
                     rl.prompt();
                 };
@@ -127,7 +129,8 @@ exports.playCmd = (rl) => {
 
     const playGame = () => {
         if (toBeResolved.length === 0) {
-            log('Has terminado satisfactoriamente el Quiz. Aciertos: ');
+            log('No hay nada mas que preguntar.');
+            log(`Fin del juego. Aciertos: ${score}`);
             biglog(score, 'green');
             rl.prompt();
         } else {
@@ -141,12 +144,12 @@ exports.playCmd = (rl) => {
                     if (resp === respBuena) {
                         score++;
                         toBeResolved.splice(idAzar, 1);
-                        log(`${colorize('CORRECTO', 'green')} - Lleva ${score} aciertos.`);
+                        log(`CORRECTO - Lleva ${score} aciertos.`);
                         playGame();
 
                     }
                     else {
-                        log(`${colorize('INCORRECTO', 'red')} - Fin del Quiz. Aciertos: `);
+                        log(`INCORRECTO - Fin del juego. Aciertos: ${score}`);
                         biglog(score, 'red');
                         rl.prompt();
                     };
