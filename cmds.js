@@ -149,7 +149,9 @@ exports.playCmd = (rl) => {
 
                     }
                     else {
-                        log(`INCORRECTO - Fin del juego. Aciertos: ${score}`);
+                        log(`INCORRECTO`);
+                        log(`Fin del juego. Aciertos: ${score}`);
+
                         biglog(score, 'red');
                         rl.prompt();
                     };
