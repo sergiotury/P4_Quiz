@@ -129,7 +129,7 @@ exports.playCmd = (rl) => {
 
     const playGame = () => {
         if (toBeResolved.length === 0) {
-            log('No hay nada mas que preguntar.');
+            log('No hay nada más que preguntar.');
             log(`Fin del juego. Aciertos: ${score}`);
             biglog(score, 'green');
             rl.prompt();
@@ -149,9 +149,8 @@ exports.playCmd = (rl) => {
 
                     }
                     else {
-                        log(`INCORRECTO`);
+                        log(`INCORRECTO.`);
                         log(`Fin del juego. Aciertos: ${score}`);
-
                         biglog(score, 'red');
                         rl.prompt();
                     };
