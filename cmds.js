@@ -95,23 +95,25 @@ exports.testCmd = (rl, id) => {
 
     if (typeof id === "undefined") {
         errorlog(`Falta el parámetro id.`);
+        rl.prompt();
     } else {
         try {
-
             const quiz = model.getByIndex(id);
-
-            rl.question(`${out.colorize(quiz.question+'?', 'cyan')}    `, answer => {
-
-                if(answer.trim().toLowerCase() === quiz.answer.toLowerCase()){
-                    console.log('Su respuesta es correcta. ');
-                    out.biglog('Correcta', 'green');
-                } else {
-                    console.log('Su respuesta es incorrecta. ');
-                    out.biglog('Incorrecta', 'red');
+            rl.question(colorize(`${quiz.question}` + '? ', 'red'), answer => {
+                const resp = answer.toLowerCase().trim();
+                const respBuena = quiz.answer.toLowerCase().trim();
+                if (resp === respBuena) {
+                    log('Su repuesta es correcta. ');
+                    biglog('CORRECTA', 'green');
+                    rl.prompt();
                 }
-
+                else {
+                    log('Su respuesta es incorrecta. ');
+                    biglog('INCORRECTA', 'red');
+                    rl.prompt();
+                };
                 rl.prompt();
-});
+            });
 
         } catch (error) {
             errorlog(error.message);
@@ -132,9 +134,9 @@ exports.playCmd = (rl) => {
     const playOne = () => {
 
         if (toBeResolved.length === 0) {
-            out.log(' Ya ha respondido a todas las preguntas :) ', 'green');
+            log(' Ya ha respondido a todas las preguntas ', 'green');
             console.log(' Fin del examen. Aciertos:')
-            out.biglog(`${score}`, "magenta");
+            biglog(`${score}`, "magenta");
             rl.prompt();
 
         } else {
@@ -144,17 +146,17 @@ exports.playCmd = (rl) => {
             const quiz = quizzes[toBeResolved[id]];
             toBeResolved.splice(id, 1);
 
-            rl.question(`${out.colorize(quiz.question + '?', 'cyan')}   `, answer => {
+            rl.question(`${colorize(quiz.question + '?', 'cyan')}   `, answer => {
 
                 if (answer.trim().toLowerCase() === quiz.answer.toLowerCase()) {
                     score = score + 1;
-                    console.log(` ${out.colorize('CORRECTO', 'green')} - Lleva ${out.colorize(score, 'green')} aciertos`);
+                    console.log(` ${colorize('CORRECTO', 'green')} - Lleva ${colorize(score, 'green')} aciertos`);
                     playOne();
 
                 } else {
-                    out.log(' INCORRECTO', 'red');
+                    log(' INCORRECTO', 'red');
                     console.log(' Fin del examen. Aciertos:')
-                    out.biglog(`${score}`, "magenta");
+                    biglog(`${score}`, "magenta");
                     rl.prompt();
                 }
             });
