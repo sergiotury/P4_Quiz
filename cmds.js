@@ -123,47 +123,46 @@ exports.testCmd = (rl, id) => {
 exports.playCmd = (rl) => {
     let score = 0;
     let toBeResolved = [];
-    for (i = 0; i < model.count(); i++) {
-        toBeResolved[i] = model.getByIndex(i);
+    const quizzes = model.getAll();
+    for (let i = 0; i < quizzes.length; i++) {
+        toBeResolved.push(i);
+
     }
 
-    const playGame = () => {
+    const playOne = () => {
+
         if (toBeResolved.length === 0) {
-            log('No hay nada más que preguntar');
-            log(`Fin del juego. Aciertos: ${score}`);
-            biglog(score, 'magenta');
+            out.log(' Ya ha respondido a todas las preguntas :) ', 'green');
+            console.log(' Fin del examen. Aciertos:')
+            out.biglog(`${score}`, "magenta");
             rl.prompt();
+
         } else {
-            try {
-                let idAzar = Math.round(Math.random() * (toBeResolved.length - 1));
 
+            let id = Math.floor(Math.random() * (toBeResolved.length));
 
-                rl.question(colorize(`${toBeResolved[idAzar].question}` + '? ', 'red'), answer => {
-                    const resp = answer.toLowerCase().trim();
-                    const respBuena = toBeResolved[idAzar].answer.toLowerCase().trim();
-                    if (resp === respBuena) {
-                        score++;
-                        toBeResolved.splice(idAzar, 1);
-                        log(`CORRECTO - Lleva ${score} aciertos.`);
-                        playGame();
+            const quiz = quizzes[toBeResolved[id]];
+            toBeResolved.splice(id, 1);
 
-                    }
-                    else {
-                        log('INCORRECTO.');
-                        log(`Fin del juego. Aciertos: ${score}`);
-                        biglog(score, 'magenta');
-                        rl.prompt();
-                    };
-                });
+            rl.question(`${out.colorize(quiz.question + '?', 'cyan')}   `, answer => {
 
+                if (answer.trim().toLowerCase() === quiz.answer.toLowerCase()) {
+                    score = score + 1;
+                    console.log(` ${out.colorize('CORRECTO', 'green')} - Lleva ${out.colorize(score, 'green')} aciertos`);
+                    playOne();
 
-            } catch (error) {
-                errorlog(error.message);
-                rl.prompt();
-            }
-        };
-    };
-    playGame();
+                } else {
+                    out.log(' INCORRECTO', 'red');
+                    console.log(' Fin del examen. Aciertos:')
+                    out.biglog(`${score}`, "magenta");
+                    rl.prompt();
+                }
+            });
+        }
+    }
+
+    playOne();
+
 };
 
 exports.creditsCmd = (rl) => {
