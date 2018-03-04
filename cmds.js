@@ -97,21 +97,21 @@ exports.testCmd = (rl, id) => {
         errorlog(`Falta el parámetro id.`);
     } else {
         try {
+
             const quiz = model.getByIndex(id);
-            rl.question(colorize(`${quiz.question}` + '? ', 'red'), answer => {
-                const resp = answer.toLowerCase().trim();
-                const respBuena = quiz.answer.toLowerCase().trim();
-                if (resp === respBuena) {
-                    log('Su repuesta es correcta.');
-                    biglog('CORRECTO', 'green');
-                    rl.prompt();
+
+            rl.question(`${out.colorize(quiz.question+'?', 'cyan')}    `, answer => {
+
+                if(answer.trim().toLowerCase() === quiz.answer.toLowerCase()){
+                    console.log('Su respuesta es correcta. ');
+                    out.biglog('Correcta', 'green');
+                } else {
+                    console.log('Su respuesta es incorrecta. ');
+                    out.biglog('Incorrecta', 'red');
                 }
-                else {
-                    log('Su respuesta es incorrecta.');
-                    biglog('INCORRECTO', 'red');
-                    rl.prompt();
-                };
-            });
+
+                rl.prompt();
+});
 
         } catch (error) {
             errorlog(error.message);
