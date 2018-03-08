@@ -170,7 +170,7 @@ exports.testCmd = (rl, id) => {
                 rl.prompt();
             });
         })
-                
+
         .catch(Sequelize.ValidationError, error => {
             errorlog('El quiz es erroneo:');
             error.errors.forEach(({ message }) => errorlog(message));
@@ -183,52 +183,54 @@ exports.testCmd = (rl, id) => {
         });
 
 };
- 
+
 
 exports.playCmd = (rl) => {
     let score = 0;
     let toBeResolved = [];
-    const quizzes = model.getAll();
-    for (let i = 0; i < quizzes.length; i++) {
-        toBeResolved.push(i);
+    models.quiz.findAndCountAll()
+        .then(result => {
+            for (let i = 0; i < result.count; i++) {
+                toBeResolved.push(i);
+                log(toBeResolved)
+            };            
 
-    }
+            })        
+        .then(quiz => {
 
-    const playOne = () => {
+            const playOne = () => {
+                                           
 
-        if (toBeResolved.length === 0) {
-            log(' Ya ha respondido a todas las preguntas ', 'green');
-            console.log(' Fin del examen. Aciertos:')
-            biglog(`${score}`, "magenta");
-            rl.prompt();
-
-        } else {
-
-            let id = Math.floor(Math.random() * (toBeResolved.length));
-
-            const quiz = quizzes[toBeResolved[id]];
-            toBeResolved.splice(id, 1);
-
-            rl.question(`${colorize(quiz.question + '?', 'red')}   `, answer => {
-
-                if (answer.trim().toLowerCase() === quiz.answer.toLowerCase()) {
-                    score = score + 1;
-                    console.log(` ${colorize('CORRECTO', 'green')} - Lleva ${colorize(score, 'green')} aciertos`);
-                    playOne();
-
-                } else {
-                    log(' INCORRECTO', 'red');
+                if (toBeResolved.length === 0) {
+                    log(' Ya ha respondido a todas las preguntas ', 'green');
                     console.log(' Fin del examen. Aciertos:')
                     biglog(`${score}`, "magenta");
                     rl.prompt();
+
+                } else {
+
+                    let idAzar = Math.floor(Math.random() * (toBeResolved.length));                    
+                    toBeResolved.splice(idAzar, 1);
+                    rl.question(colorize(`${models.quiz.question({ where: { idAzar } })}` + '? ', 'red'), answer => {   
+
+                        if (answer.trim().toLowerCase() === models.quiz.answer({ where: { idAzar } }).toLowerCase()) {
+                            score = score + 1;
+                            console.log(` ${colorize('CORRECTO', 'green')} - Lleva ${colorize(score, 'green')} aciertos`);
+                            playOne();
+
+                        } else {
+                            log(' INCORRECTO', 'red');
+                            console.log(' Fin del examen. Aciertos:')
+                            biglog(`${score}`, "magenta");
+                            rl.prompt();
+                        }
+                    });
                 }
-            });
-        }
-    }
+            }
+            playOne();
 
-    playOne();
-
-};
+        });
+}
 
 exports.creditsCmd = (rl) => {
     log('Autores de la práctica:');
