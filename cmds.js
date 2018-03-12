@@ -188,18 +188,21 @@ exports.testCmd = (rl, id) => {
 exports.playCmd = (rl) => {
     let score = 0;
     let toBeResolved = [];
-    models.quiz.findAndCountAll()
-        .then(result => {
-            for (let i = 0; i < result.count; i++) {
-                toBeResolved.push(i);
-                log(toBeResolved)
-            };            
+    let todasPreguntas = [];
+    models.quiz.findAll()
+        .each(result => {
+            todasPreguntas.push(result);
+        })
+        .then(() => {
 
-            })        
-        .then(quiz => {
+            for (let i = 0; i < todasPreguntas.length; i++) {
+
+                toBeResolved.push(i);
+            }
+
 
             const playOne = () => {
-                                           
+
 
                 if (toBeResolved.length === 0) {
                     log(' Ya ha respondido a todas las preguntas ', 'green');
@@ -209,11 +212,12 @@ exports.playCmd = (rl) => {
 
                 } else {
 
-                    let idAzar = Math.floor(Math.random() * (toBeResolved.length));                    
-                    toBeResolved.splice(idAzar, 1);
-                    rl.question(colorize(`${models.quiz.question({ where: { idAzar } })}` + '? ', 'red'), answer => {   
+                    let idAzar = Math.floor(Math.random() * (toBeResolved.length));
+                    const pregunta = todasPreguntas[toBeResolved[idAzar]];
+                    toBeResolved.splice(idAzar, 1);                    
+                    rl.question(colorize(`${pregunta.question}` + '? ', 'red'), answer => {
 
-                        if (answer.trim().toLowerCase() === models.quiz.answer({ where: { idAzar } }).toLowerCase()) {
+                        if (answer.trim().toLowerCase() === pregunta.answer.toLowerCase()) {
                             score = score + 1;
                             console.log(` ${colorize('CORRECTO', 'green')} - Lleva ${colorize(score, 'green')} aciertos`);
                             playOne();
@@ -229,8 +233,18 @@ exports.playCmd = (rl) => {
             }
             playOne();
 
+        })
+        .catch(Sequelize.ValidationError, error => {
+            errorlog('El quiz es erroneo:');
+            error.errors.forEach(({ message }) => errorlog(message));
+        })
+        .catch(error => {
+            errorlog(error.message);
+        })
+        .then(() => {
+            rl.prompt();
         });
-}
+};
 
 exports.creditsCmd = (rl) => {
     log('Autores de la práctica:');
