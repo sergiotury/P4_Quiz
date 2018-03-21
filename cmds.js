@@ -206,7 +206,7 @@ exports.playCmd = (socket, rl) => {
 
                 if (toBeResolved.length === 0) {
                     log(socket, ' Ya ha respondido a todas las preguntas ', 'green');
-                    console.log(socket, ' Fin del examen. Aciertos:')
+                    log(socket, ' Fin del examen. Aciertos:')
                     biglog(socket, `${score}`, "magenta");
                     rl.prompt();
 
@@ -219,12 +219,12 @@ exports.playCmd = (socket, rl) => {
 
                         if (answer.trim().toLowerCase() === pregunta.answer.toLowerCase()) {
                             score = score + 1;
-                            console.log(socket, ` ${colorize('CORRECTO', 'green')} - Lleva ${colorize(score, 'green')} aciertos`);
+                            log(socket, ` ${colorize('CORRECTO', 'green')} - Lleva ${colorize(score, 'green')} aciertos`);
                             playOne();
 
                         } else {
                             log(socket, ' INCORRECTO', 'red');
-                            console.log(socket, ' Fin del examen. Aciertos:')
+                            log(socket, ' Fin del examen. Aciertos:')
                             biglog(socket, `${score}`, "magenta");
                             rl.prompt();
                         }
@@ -236,7 +236,7 @@ exports.playCmd = (socket, rl) => {
         })
         .catch(Sequelize.ValidationError, error => {
             errorlog(socket, 'El quiz es erroneo:');
-            error.errors.forEach(({ message }) => errorlog(message));
+            error.errors.forEach(({ message }) => errorlog(socket, message));
         })
         .catch(error => {
             errorlog(socket, error.message);
